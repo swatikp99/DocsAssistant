@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: docs-assistant
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/docsassistant}
+    username: ${DB_USERNAME:pgdocs}
+    password: ${DB_PASSWORD:pgdocs}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+server:
+  port: 8080
+
+# Application specific settings
+app:
+  # Comma separated list of origins allowed to call /api/*
+  cors:
+    allowed-origins: http://localhost:5173
+  storage:
+    # Root folder on the local filesystem where uploaded files are stored.
+    root: ${STORAGE_ROOT:./data/uploads}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        exclude: health,info
