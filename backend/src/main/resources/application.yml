@@ -34,6 +34,10 @@ app:
   storage:
     # Root folder on the local filesystem where uploaded files are stored.
     root: ${STORAGE_ROOT:./data/uploads}
+  ingestion:
+    # chunk-size = target words per chunk; chunk-overlap = shared words between neighbouring chunks.
+    chunk-size: ${CHUNK_SIZE:375}
+    chunk-overlap: ${CHUNK_OVERLAP:60}
 
 management:
   endpoints:
