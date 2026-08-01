@@ -35,6 +35,12 @@ public class Document {
     @Column(nullable = false, length = 32)
     private String status;
 
+    @Column(name = "chunk_count", nullable = false)
+    private int chunkCount;
+
+    @Column(name = "failure_reason", length = 1024)
+    private String failureReason;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -50,6 +56,7 @@ public class Document {
         this.sizeBytes = sizeBytes;
         this.storagePath = storagePath;
         this.status = status;
+        this.chunkCount = 0;
         this.createdAt = createdAt;
     }
 
@@ -80,6 +87,10 @@ public class Document {
     public String getStatus() {
         return status;
     }
+
+    public int getChunkCount() { return chunkCount; }
+
+    public String getFailureReason() { return failureReason; }
 
     public Instant getCreatedAt() {
         return createdAt;

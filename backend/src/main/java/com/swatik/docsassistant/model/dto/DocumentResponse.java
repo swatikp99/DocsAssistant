@@ -11,6 +11,8 @@ public record DocumentResponse(
         String type,
         long sizeBytes,
         String status,
+        int chunkCount,
+        String failureReason,
         Instant createdAt) {
 
     public static DocumentResponse from(Document doc) {
@@ -20,6 +22,8 @@ public record DocumentResponse(
                 doc.getType(),
                 doc.getSizeBytes(),
                 doc.getStatus(),
+                doc.getChunkCount(),
+                doc.getFailureReason(),
                 doc.getCreatedAt());
     }
 }

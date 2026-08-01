@@ -36,7 +36,7 @@ public class DocumentControllerTest {
     void uploadReturnsCreated() throws Exception {
         UUID id = UUID.randomUUID();
         when(documentService.upload(any())).thenReturn(
-                new DocumentResponse(id, "report.pdf", "PDF", 1234, "UPLOADED", Instant.now()));
+                new DocumentResponse(id, "report.pdf", "PDF", 1234, "UPLOADED", 0, null, Instant.now()));
 
         MockMultipartFile file = new MockMultipartFile("file", "report.pdf", MediaType.APPLICATION_PDF_VALUE, "hello".getBytes());
 
@@ -50,7 +50,7 @@ public class DocumentControllerTest {
     @Test
     void listReturnsDocuments() throws Exception {
         when(documentService.list()).thenReturn(List.of(
-                new DocumentResponse(UUID.randomUUID(),"a.txt","TXT",10,"UPLOADED",Instant.now())));
+                new DocumentResponse(UUID.randomUUID(),"a.txt","TXT",10,"READY",3,null,Instant.now())));
         mockMvc.perform(get("/api/documents"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].filename").value("a.txt"));
