@@ -38,6 +38,12 @@ app:
     # chunk-size = target words per chunk; chunk-overlap = shared words between neighbouring chunks.
     chunk-size: ${CHUNK_SIZE:375}
     chunk-overlap: ${CHUNK_OVERLAP:60}
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      embedding-model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
+      # Vector size produced by the embedding model; must match the pgvector chunks.embedding column
+      embedding-dimensions: ${OLLAMA_EMBEDDING_DIMENSIONS:768}
 
 management:
   endpoints:
