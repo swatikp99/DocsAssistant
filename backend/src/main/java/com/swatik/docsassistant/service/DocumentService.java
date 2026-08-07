@@ -5,6 +5,7 @@ import com.swatik.docsassistant.exception.NotFoundException;
 import com.swatik.docsassistant.model.dto.DocumentResponse;
 import com.swatik.docsassistant.model.entity.Document;
 import com.swatik.docsassistant.repository.DocumentRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,10 +19,12 @@ public class DocumentService {
 
     private final DocumentRepository repository;
     private final StorageService storageService;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public DocumentService(DocumentRepository repository, StorageService storageService) {
+    public DocumentService(DocumentRepository repository, StorageService storageService, ApplicationEventPublisher eventPublisher) {
         this.repository = repository;
         this.storageService = storageService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -43,7 +46,19 @@ public class DocumentService {
                 storagePath,
                 "UPLOADED",
                 Instant.now());
-        return DocumentResponse.from(repository.save(doc));
+
+        DocumentResponse response = DocumentResponse.from(repository.save(doc));
+
+        // Start ingestion after this transaction commits.
+        eventPublisher.publishEvent(new DocumentUploadedEvent(id));
+
+        return response;
+    }
+
+    @Transactional(readOnly = true)
+    public DocumentResponse get(UUID id){
+        Document doc = repository.findById(id).orElseThrow(() -> new NotFoundException("Document not found: "+id));
+        return DocumentResponse.from(doc);
     }
 
     @Transactional(readOnly = true)
@@ -55,10 +70,23 @@ public class DocumentService {
     }
 
     @Transactional
+    public DocumentResponse reindex(UUID id){
+        Document doc = repository.findById(id).orElseThrow(() -> new NotFoundException("Document not found: "+id));
+
+        // Reflect PROCESSING immediately in the response, then re-run ingestion after this transaction commits
+        doc.markProcessing();
+        repository.save(doc);
+        eventPublisher.publishEvent(new DocumentUploadedEvent(id));
+        return DocumentResponse.from(doc);
+    }
+
+    @Transactional
     public void delete(UUID id) {
         Document doc = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Document not found: " + id));
         storageService.delete(doc.getStoragePath());
+
+        // Chunks are removed automatically via the FK ON DELETE CASCADE
         repository.delete(doc);
     }
 }

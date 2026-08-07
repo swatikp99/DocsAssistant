@@ -95,4 +95,24 @@ public class Document {
     public Instant getCreatedAt() {
         return createdAt;
     }
+
+    //Ingestion started: mark PORCESSING and clear any previous failure.
+    public void markProcessing(){
+        this.status = "PROCESSING";
+        this.failureReason = null;
+    }
+
+    //Ingestion succeeded: mark READY and record how many chunks were stored.
+    public void markReady(int chunkCount){
+        this.status = "READY";
+        this.chunkCount = chunkCount;
+        this.failureReason = null;
+    }
+
+    //Ingestion failed: mark FAILED and reset chunk count, keep a short reason.
+    public void markFailed(String reason){
+        this.status = "FAILED";
+        this.chunkCount = 0;
+        this.failureReason = reason;
+    }
 }

@@ -33,6 +33,17 @@ public class DocumentController {
         return documentService.list();
     }
 
+    @GetMapping("/{id}")
+    public DocumentResponse get(@PathVariable UUID id) {
+        return documentService.get(id);
+    }
+
+    @PostMapping("/{id}/reindex")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public DocumentResponse reindex(@PathVariable UUID id) {
+        return documentService.reindex(id);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         documentService.delete(id);

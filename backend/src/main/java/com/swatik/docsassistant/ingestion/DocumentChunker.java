@@ -1,6 +1,7 @@
 package com.swatik.docsassistant.ingestion;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
  * Embedding models and LLM have a limited context window, and retrieval works best on small, focussed passages.
  * We therefore break the full text into pieces of sroughly
  */
+@Service
 public class DocumentChunker {
 
     // Target chunk size, in words. Configurable via app.ingestion.chunk-size.
