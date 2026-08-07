@@ -21,5 +21,7 @@ export interface DocumentResponse {
     type: DocumentType;
     sizeBytes: number;
     status: DocumentStatus;
+    chunkCount: number;
+    failureReason: string | null;
     createdAt: string;
 }

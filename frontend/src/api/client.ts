@@ -1,5 +1,5 @@
 // Thin fetch wrapper for RAG backend. All api calls go through here so base url and error handling live in one place
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8060/api';
 
 // Backend error payload shape
 interface ApiErrorBody {
@@ -63,4 +63,18 @@ export async function apiDelete(path: string): Promise<void> {
   if (!response.ok) {
     throw new Error(await toErrorMessage(response));
   }
+}
+
+// POSTs an action with no request body and returns the JSON respnse.
+export async function apiPost<T>(path: string): Promise<T>{
+  const response = await fetch(`${API_BASE_URL}${path}`,{
+    method: 'POST',
+    headers: { Accept: 'application/json'},
+  });
+
+  if(!response.ok){
+    throw new Error(await toErrorMessage(response));
+  }
+
+  return (await response.json()) as T;
 }

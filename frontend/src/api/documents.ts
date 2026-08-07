@@ -1,4 +1,4 @@
-import { apiDelete, apiGet, apiUpload } from './client';
+import { apiDelete, apiGet, apiPost, apiUpload } from './client';
 import type { DocumentResponse } from '../types/document';
 
 // GET /api/documents - lists documents, newest first
@@ -16,4 +16,9 @@ export function uploadDocument(file: File): Promise<DocumentResponse> {
 // DELETE /api/documents/{id} - removes a document(metadata + file on disk)
 export function deleteDocument(id: string): Promise<void> {
     return apiDelete(`/documents/${id}`);
+}
+
+// POST /api/documents/{id}/reindex - re-runs ingestion for a document.
+export function reindexDocument(id: string): Promise<DocumentResponse> {
+    return apiPost<DocumentResponse>(`/documents/${id}/reindex`);
 }
